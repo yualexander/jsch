@@ -107,6 +107,7 @@ System.err.println("");
     int j=0;
     byte[] tmp;
 
+      // 0:0:0:7:73:73:68:2d is the identification string exchange message
     if(sig[0]==0 && sig[1]==0 && sig[2]==0){
     j=((sig[i++]<<24)&0xff000000)|((sig[i++]<<16)&0x00ff0000)|
 	((sig[i++]<<8)&0x0000ff00)|((sig[i++])&0x000000ff);
@@ -117,31 +118,47 @@ System.err.println("");
     System.arraycopy(sig, i, tmp, 0, j); sig=tmp;
     }
 
-    // ASN.1
-    int frst=((sig[0]&0x80)!=0?1:0);
-    int scnd=((sig[20]&0x80)!=0?1:0);
-    //System.err.println("frst: "+frst+", scnd: "+scnd);
 
-    int length=sig.length+6+frst+scnd;
-    tmp=new byte[length];
-    tmp[0]=(byte)0x30; tmp[1]=(byte)0x2c; 
-    tmp[1]+=frst; tmp[1]+=scnd;
-    tmp[2]=(byte)0x02; tmp[3]=(byte)0x14;
-    tmp[3]+=frst;
-    System.arraycopy(sig, 0, tmp, 4+frst, 20);
-    tmp[4+tmp[3]]=(byte)0x02; tmp[5+tmp[3]]=(byte)0x14;
-    tmp[5+tmp[3]]+=scnd;
-    System.arraycopy(sig, 20, tmp, 6+tmp[3]+scnd, 20);
-    sig=tmp;
+      // ASN.1
+      int frst=computeASN1Length(sig, 0);
+      int scnd=computeASN1Length(sig, 20);
+      //System.err.println("frst: "+frst+", scnd: "+scnd);
+      
+      int lengthOfFrstMax20 = Math.min(frst, 20);
+      int lengthOfScndMax20 = Math.min(scnd, 20);
 
-/*
-    tmp=new byte[sig.length+6];
-    tmp[0]=(byte)0x30; tmp[1]=(byte)0x2c; 
-    tmp[2]=(byte)0x02; tmp[3]=(byte)0x14;
-    System.arraycopy(sig, 0, tmp, 4, 20);
-    tmp[24]=(byte)0x02; tmp[25]=(byte)0x14;
-    System.arraycopy(sig, 20, tmp, 26, 20); sig=tmp;
-*/  
-    return signature.verify(sig);
+      int length=6+frst+scnd;
+      tmp=new byte[length];
+      tmp[0]=(byte)0x30; // ASN.1 SEQUENCE
+      tmp[1]+=frst+scnd+4; // ASN.1 length of sequence
+      tmp[2]=(byte)0x02;  // ASN.1 INTEGER
+      tmp[3]+=frst; // ASN.1 length of integer
+      System.arraycopy(sig, 20 - lengthOfFrstMax20, tmp, 4 + (frst > 20 ? 1 : 0), lengthOfFrstMax20);
+      tmp[4+tmp[3]]=(byte)0x02; // ASN.1 INTEGER
+      tmp[5+tmp[3]]+=scnd; // ASN.1 length of integer
+      System.arraycopy(sig, 20 + 20 - lengthOfScndMax20, tmp, 6 + tmp[3] + (scnd > 20 ? 1 : 0), lengthOfScndMax20);
+      sig=tmp;
+
+      return signature.verify(sig);
   }
+  
+  private int computeASN1Length(final byte[] sig, final int index)
+  {
+      int length = 20;
+      if ((sig[index] & 0x80) != 0)
+      {
+          // ASN.1 would see this as negative INTEGER, so we add a leading 0x00 byte.
+          length++;
+      }
+      else
+      {
+          while (sig[index + 20 - length] == 0 && (sig[index + 20 - length + 1] & 0x80) != 0x80)
+          {
+              // The mpint starts with redundant 0x00 bytes.
+              length--;
+          }
+      }
+      return length;
+  }
+
 }
