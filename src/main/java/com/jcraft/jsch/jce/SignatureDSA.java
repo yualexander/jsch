@@ -160,5 +160,4 @@ public class SignatureDSA implements com.jcraft.jsch.SignatureDSA
         }
         return length;
     }
-
 }
