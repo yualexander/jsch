@@ -13,9 +13,9 @@
     <url>http://www.jcraft.com/</url>
   </organization>
   <scm>
-    <connection>scm:git:http://git.jcraft.com/jsch.git</connection>
-    <developerConnection>scm:git:http://git.jcraft.com/jsch.git</developerConnection>
-    <url>http://git.jcraft.com/jsch.git</url>
+     <connection>scm:git:git@github.com:mulesoft/jsch.git</connection>
+     <url>scm:git:git@github.com:mulesoft/jsch.git</url>
+     <developerConnection>scm:git:git@github.com:mulesoft/jsch.git</developerConnection>
   </scm>
   <developers>
     <developer>
