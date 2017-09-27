@@ -106,22 +106,8 @@
           </execution>
         </executions>
       </plugin>
-<!--
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-gpg-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>sign-artifacts</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>sign</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
--->
     </plugins>
+
     <extensions>
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
@@ -160,12 +146,4 @@
             </build>
         </profile>
     </profiles>
-    
-  <parent>
-    <groupId>org.sonatype.oss</groupId>
-    <artifactId>oss-parent</artifactId>
-    <version>6</version>
-  </parent>
-  
-  
 </project>
