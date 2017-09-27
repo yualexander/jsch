@@ -3,7 +3,7 @@
   <groupId>org.mule.jsch</groupId>
   <artifactId>jsch</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0</version>
+  <version>1.0.1-SNAPSHOT</version>
   <name>JSch</name>
   <url>http://www.jcraft.com/jsch/</url>
   <description>JSch is a pure Java implementation of SSH2</description>
@@ -15,7 +15,7 @@
      <connection>scm:git:git@github.com:mulesoft/jsch.git</connection>
      <url>scm:git:git@github.com:mulesoft/jsch.git</url>
      <developerConnection>scm:git:git@github.com:mulesoft/jsch.git</developerConnection>
-    <tag>1.0.0</tag>
+    <tag>HEAD</tag>
   </scm>
   <developers>
     <developer>
